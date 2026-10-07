@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+ content="width=device-width,initial-scale=1">
+
+<title>MZIPORN — PAYMENT</title>
+
+<link rel="preconnect"
+ href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+ href="https://fonts.gstatic.com"
+ crossorigin>
+
+<link
+ href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
+ rel="stylesheet">
+
+<style>
+
+*{
+ box-sizing:border-box;
+ margin:0;
+ padding:0
+}
+
+:root{
+ --bg:#050505;
+ --panel:#0c0c10;
+ --panel2:#111116;
+ --red:#900000;
+ --red2:#d00000;
+ --text:#eee;
+ --muted:#909099;
+ --line:#351010
+}
+
+body{
+ min-height:100vh;
+ overflow-x:hidden;
+ background:
+ radial-gradient(circle at 50% -10%,#260709,#080606 35%,#050505 70%);
+ color:var(--text);
+ font-family:Inter,Arial,sans-serif
+}
+
+body:before{
+ content:"";
+ position:fixed;
+ inset:0;
+ pointer-events:none;
+ opacity:.035;
+ background-image:radial-gradient(#fff .6px,transparent .6px);
+ background-size:4px 4px;
+ z-index:9999
+}
+
+button,input,select{
+ font:inherit
+}
+
+button{
+ cursor:pointer
+}
+
+a{
+ color:inherit;
+ text-decoration:none
+}
+
+header{
+ height:72px;
+ padding:0 30px;
+ position:sticky;
+ top:0;
+ z-index:500;
+
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+
+ background:rgba(5,5,6,.95);
+ border-bottom:1px solid #260909;
+ backdrop-filter:blur(12px)
+}
+
+.logo{
+ height:40px;
+ max-width:180px;
+ object-fit:contain
+}
+
+.header-actions{
+ display:flex;
+ gap:8px
+}
+
+.top-btn{
+ height:40px;
+ padding:0 14px;
+ background:#0d0d11;
+ border:1px solid #351010;
+ color:#ddd;
+ font-size:11px;
+ font-weight:800
+}
+
+.payment-page{
+ width:min(1000px,calc(100% - 30px));
+ margin:35px auto 70px
+}
+
+.payment-title{
+ font-family:Cinzel,serif;
+ font-size:28px;
+ letter-spacing:2px
+}
+
+.payment-subtitle{
+ margin-top:8px;
+ color:#777;
+ font-size:12px
+}
+
+.panel{
+ margin-top:22px;
+ padding:22px;
+ background:linear-gradient(180deg,#0d0d11,#08080a);
+ border:1px solid #341010
+}
+
+.panel-title{
+ font-family:Cinzel,serif;
+ font-size:17px;
+ letter-spacing:1.5px;
+ margin-bottom:16px
+}
+
+.package-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px
+}
+
+.package{
+ position:relative;
+ padding:15px;
+ background:#09090c;
+ border:1px solid #321010;
+ cursor:pointer;
+ transition:.2s
+}
+
+.package.active{
+ border-color:#c00000;
+ box-shadow:0 0 20px rgba(180,0,0,.15)
+}
+
+.package-price{
+ font-family:Cinzel,serif;
+ font-size:24px
+}
+
+.package-currency{
+ color:#777;
+ font-size:11px;
+ margin-left:3px
+}
+
+.package-info{
+ position:absolute;
+ right:9px;
+ top:9px;
+ width:20px;
+ height:20px;
+ display:grid;
+ place-items:center;
+ border-radius:50%;
+ border:1px solid #733;
+ color:#ccc;
+ font-size:11px
+}
+
+.package-info:hover{
+ background:#800000;
+ border-color:#d00000
+}
+
+.package-features{
+ display:none;
+ margin-top:13px;
+ padding-top:12px;
+ border-top:1px solid #2b0c0c;
+ color:#999;
+ font-size:11px;
+ line-height:1.8
+}
+
+.package.show-features .package-features{
+ display:block
+}
+
+.package-features div{
+ display:block
+}
+
+.package-features .yes{
+ color:#ddd
+}
+
+.package-features .no{
+ color:#6b6b70
+}
+
+.coin-grid{
+ display:flex;
+ flex-wrap:wrap;
+ gap:8px
+}
+
+.coin{
+ padding:9px 13px;
+
+ min-height:42px;
+
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+
+ gap:8px;
+
+ border-radius:999px;
+
+ background:#09090c;
+ border:1px solid #321010;
+
+ color:#bbb;
+
+ cursor:pointer;
+
+ font-size:11px;
+ font-weight:800;
+
+ line-height:1
+}
+
+.coin.active{
+ border-color:#d00000;
+ background:#190708;
+ color:#fff;
+ box-shadow:0 0 15px rgba(180,0,0,.12)
+}
+
+.coin-icon{
+ width:22px;
+ height:22px;
+
+ flex:0 0 22px;
+
+ display:block;
+
+ object-fit:contain;
+ object-position:center;
+
+ border-radius:0;
+
+ background:transparent;
+
+ margin:0;
+ padding:0
+}
+
+.network-grid{
+ display:flex;
+ flex-wrap:wrap;
+ gap:8px
+}
+
+.network{
+ padding:9px 12px;
+ background:#09090c;
+ border:1px solid #321010;
+ color:#999;
+ cursor:pointer;
+ font-size:11px
+}
+
+.network.active{
+ background:#190707;
+ border-color:#c00000;
+ color:#fff
+}
+
+.summary{
+ margin-top:20px;
+ padding:15px;
+ background:#08080a;
+ border:1px solid #271010
+}
+
+.summary-row{
+ display:flex;
+ justify-content:space-between;
+ gap:15px;
+ padding:7px 0;
+ color:#888;
+ font-size:12px
+}
+
+.summary-row strong{
+ color:#eee;
+ text-align:right
+}
+
+.primary-btn{
+ width:100%;
+ margin-top:18px;
+ padding:14px;
+
+ border:1px solid #d00000;
+ background:linear-gradient(#a00000,#720000);
+ color:#fff;
+
+ font-weight:800;
+ letter-spacing:1px
+}
+
+.secondary-btn{
+ width:100%;
+ margin-top:10px;
+ padding:13px;
+
+ border:1px solid #351010;
+ background:#0b0b0e;
+ color:#bbb;
+ font-weight:700
+}
+
+.notice{
+ margin-top:12px;
+ color:#777;
+ font-size:10px;
+ line-height:1.6
+}
+
+
+/* QR */
+
+.qr-panel{
+ display:none
+}
+
+.qr-panel.active{
+ display:block
+}
+
+.qr-layout{
+ display:grid;
+ grid-template-columns:280px 1fr;
+ gap:25px;
+ align-items:center
+}
+
+.qr-box{
+ min-height:280px;
+ display:grid;
+ place-items:center;
+ padding:20px;
+ background:#fff;
+ border:6px solid #fff
+}
+
+#qrcode{
+ display:flex;
+ justify-content:center
+}
+
+#qrcode img,
+#qrcode canvas{
+ max-width:100%;
+ height:auto
+}
+
+.order-id-box{
+ margin-bottom:16px;
+ padding:13px;
+ background:#070709;
+ border:1px solid #351010
+}
+
+.order-id-label{
+ color:#777;
+ font-size:10px;
+ letter-spacing:1px;
+ margin-bottom:6px
+}
+
+.order-id-value{
+ color:#fff;
+ font-family:monospace;
+ font-size:14px;
+ font-weight:800;
+ letter-spacing:1px;
+ word-break:break-all
+}
+
+.wallet-label{
+ color:#777;
+ font-size:10px;
+ letter-spacing:1px;
+ margin-bottom:7px
+}
+
+.wallet-address{
+ padding:13px;
+ word-break:break-all;
+ background:#070709;
+ border:1px solid #351010;
+ color:#eee;
+ font-family:monospace;
+ font-size:12px;
+ line-height:1.6
+}
+
+.copy-btn{
+ width:100%;
+ margin-top:9px;
+ padding:12px;
+ background:#111116;
+ border:1px solid #481010;
+ color:#fff;
+ font-weight:800
+}
+
+.paid-btn{
+ width:100%;
+ margin-top:20px;
+ padding:14px;
+ background:#8d0000;
+ border:1px solid #d00000;
+ color:#fff;
+ font-weight:800
+}
+
+
+/* FORM */
+
+.receive-panel{
+ display:none
+}
+
+.receive-panel.active{
+ display:block
+}
+
+.form-label{
+ display:block;
+ margin:14px 0 7px;
+ color:#aaa;
+ font-size:11px;
+ font-weight:700
+}
+
+.form-input{
+ width:100%;
+ padding:13px;
+ background:#070709;
+ border:1px solid #321010;
+ color:#fff;
+ outline:none
+}
+
+.form-input:focus{
+ border-color:#a00000
+}
+
+.form-help{
+ margin-top:5px;
+ color:#666;
+ font-size:10px
+}
+
+.form-error{
+ display:none;
+ margin-top:13px;
+ padding:11px;
+ background:#1a0707;
+ border:1px solid #8d1515;
+ color:#ffadad;
+ font-size:11px;
+ line-height:1.5
+}
+
+.form-success{
+ display:none;
+ margin-top:13px;
+ padding:13px;
+ background:#07150b;
+ border:1px solid #236b35;
+ color:#9ce5ac;
+ font-size:11px;
+ line-height:1.6
+}
+
+
+/* LOADING */
+
+.loading-overlay{
+ position:fixed;
+ inset:0;
+ z-index:10000;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ background:rgba(0,0,0,.95);
+ padding:20px
+}
+
+.loading-overlay.active{
+ display:flex
+}
+
+.loading-box{
+ width:min(560px,100%);
+ padding:28px;
+ background:#08080b;
+ border:1px solid #5e1111
+}
+
+.loading-title{
+ text-align:center;
+ font-family:Cinzel,serif;
+ letter-spacing:2px
+}
+
+.loading-status{
+ margin-top:9px;
+ text-align:center;
+ color:#b55b5b;
+ font-size:10px;
+ letter-spacing:1.5px
+}
+
+.progress-wrap{
+ height:7px;
+ margin:20px 0 10px;
+ background:#160707;
+ border:1px solid #321010
+}
+
+.progress-bar{
+ height:100%;
+ width:0;
+ background:#c30000;
+ transition:width .1s
+}
+
+.loading-percent{
+ display:flex;
+ justify-content:space-between;
+ color:#666;
+ font-size:10px
+}
+
+
+@media(max-width:700px){
+
+ header{
+  padding:0 12px
+ }
+
+ .logo{
+  max-width:135px
+ }
+
+ .payment-page{
+  width:calc(100% - 20px);
+  margin-top:22px
+ }
+
+ .payment-title{
+  font-size:23px
+ }
+
+ .package-grid{
+  grid-template-columns:1fr 1fr
+ }
+
+ .panel{
+  padding:16px
+ }
+
+ .qr-layout{
+  grid-template-columns:1fr
+ }
+
+ .qr-box{
+  width:220px;
+  min-height:220px;
+  margin:auto
+ }
+
+ .coin{
+  min-width:0;
+ }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<header>
+
+  <img
+    class="logo"
+    src="https://x.zzpi.cc/3RYlHl.png-webp"
+    alt="MZIPORN"
+  >
+
+  <div class="header-actions">
+
+    <button
+      class="top-btn"
+      onclick="toggleLanguage()"
+      id="langBtn"
+    >中文</button>
+
+    <button
+      class="top-btn"
+      onclick="goHome()"
+      id="homeBtn"
+    >HOME</button>
+
+  </div>
+
+</header>
+
+
+<main class="payment-page">
+
+  <h1
+    class="payment-title"
+    id="paymentTitle"
+  >
+    CRYPTO PAYMENT
+  </h1>
+
+  <p
+    class="payment-subtitle"
+    id="paymentSubtitle"
+  >
+    Select your package, cryptocurrency and network.
+  </p>
+
+
+  <!-- SELECTION -->
+
+  <section
+    class="panel"
+    id="selectionPanel"
+  >
+
+    <div
+      class="panel-title"
+      id="packageTitle"
+    >
+      SELECT PACKAGE
+    </div>
+
+
+    <div class="package-grid">
+
+      <div
+        class="package active"
+        id="package68"
+        onclick="selectPackage(68)"
+      >
+
+        <div class="package-price">
+          68
+          <span class="package-currency">
+            USDT
+          </span>
+        </div>
+
+        <div
+          class="package-info"
+          onclick="toggleFeatures(event,68)"
+        >
+          i
+        </div>
+
+        <div
+          class="package-features"
+          id="features68"
+        >
+
+          <div class="yes">
+            ✓ Unlimited login
+          </div>
+
+          <div class="yes">
+            ✓ Own collection of 3 million videos and images
+          </div>
+
+          <div class="no">
+            × Download video
+          </div>
+
+          <div class="no">
+            × Update new content
+          </div>
+
+          <div class="no">
+            × Watch video live
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="package"
+        id="package128"
+        onclick="selectPackage(128)"
+      >
+
+        <div class="package-price">
+          128
+          <span class="package-currency">
+            USDT
+          </span>
+        </div>
+
+        <div
+          class="package-info"
+          onclick="toggleFeatures(event,128)"
+        >
+          i
+        </div>
+
+        <div
+          class="package-features"
+          id="features128"
+        >
+
+          <div class="yes">
+            ✓ Unlimited login
+          </div>
+
+          <div class="yes">
+            ✓ Own collection of 3 million videos and images
+          </div>
+
+          <div class="yes">
+            ✓ Download video
+          </div>
+
+          <div class="yes">
+            ✓ Update new content
+          </div>
+
+          <div class="yes">
+            ✓ Watch video live
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="panel-title"
+      style="margin-top:25px"
+    >
+      <span id="coinTitle">
+        SELECT COIN
+      </span>
+    </div>
+
+
+    <div class="coin-grid">
+
+      <button
+        class="coin active"
+        data-coin="USDT"
+        onclick="selectCoin('USDT')"
+      >
+
+        <img
+          class="coin-icon"
+          src="https://cdn.jsdelivr.net/gh/madenix/Crypto-logo-cdn@main/Logos/USDT.svg"
+          alt="USDT"
+        >
+
+        <span>USDT</span>
+
+      </button>
+
+
+      <button
+        class="coin"
+        data-coin="BTC"
+        onclick="selectCoin('BTC')"
+      >
+
+        <img
+          class="coin-icon"
+          src="https://cdn.jsdelivr.net/gh/madenix/Crypto-logo-cdn@main/Logos/BTC.svg"
+          alt="BTC"
+        >
+
+        <span>BTC</span>
+
+      </button>
+
+
+      <button
+        class="coin"
+        data-coin="SOL"
+        onclick="selectCoin('SOL')"
+      >
+
+        <img
+          class="coin-icon"
+          src="https://cdn.jsdelivr.net/gh/madenix/Crypto-logo-cdn@main/Logos/SOL.svg"
+          alt="SOL"
+        >
+
+        <span>SOL</span>
+
+      </button>
+
+
+      <button
+        class="coin"
+        data-coin="BNB"
+        onclick="selectCoin('BNB')"
+      >
+
+        <img
+          class="coin-icon"
+          src="https://cdn.jsdelivr.net/gh/madenix/Crypto-logo-cdn@main/Logos/BNB.svg"
+          alt="BNB"
+        >
+
+        <span>BNB</span>
+
+      </button>
+
+
+      <button
+        class="coin"
+        data-coin="TRX"
+        onclick="selectCoin('TRX')"
+      >
+
+        <img
+          class="coin-icon"
+          src="https://cdn.jsdelivr.net/gh/madenix/Crypto-logo-cdn@main/Logos/TRON.svg"
+          alt="TRX"
+        >
+
+        <span>TRX</span>
+
+      </button>
+
+    </div>
+
+
+    <div
+      class="panel-title"
+      style="margin-top:25px"
+    >
+      <span id="networkTitle">
+        NETWORK
+      </span>
+    </div>
+
+
+    <div
+      class="network-grid"
+      id="networkGrid"
+    ></div>
+
+
+    <div class="summary">
+
+      <div class="summary-row">
+
+        <span id="summaryPackageLabel">
+          PACKAGE
+        </span>
+
+        <strong id="summaryPackage">
+          68 USDT
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span id="summaryCoinLabel">
+          PAYMENT
+        </span>
+
+        <strong id="summaryCoin">
+          USDT / ERC20
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span id="summaryAddressLabel">
+          WALLET
+        </span>
+
+        <strong id="summaryAddress">
+          —
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <button
+      class="primary-btn"
+      id="proceedBtn"
+      onclick="proceedToPayment()"
+    >
+      PROCEED TO PAYMENT
+    </button>
+
+
+    <div
+      class="notice"
+      id="paymentNotice"
+    >
+      Payment amount for non-USDT coins is not converted automatically.
+      Follow the displayed package value and selected payment instructions.
+    </div>
+
+  </section>
+
+
+  <!-- QR -->
+
+  <section
+    class="panel qr-panel"
+    id="qrPanel"
+  >
+
+    <div
+      class="panel-title"
+      id="qrTitle"
+    >
+      PAYMENT ADDRESS
+    </div>
+
+
+    <div class="qr-layout">
+
+      <div class="qr-box">
+
+        <div id="qrcode"></div>
+
+      </div>
+
+
+      <div>
+
+        <div class="order-id-box">
+
+          <div
+            class="order-id-label"
+            id="orderIdLabel"
+          >
+            ORDER ID
+          </div>
+
+          <div
+            class="order-id-value"
+            id="orderIdValue"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div
+          class="wallet-label"
+          id="walletLabel"
+        >
+          SEND PAYMENT TO
+        </div>
+
+
+        <div
+          class="wallet-address"
+          id="walletAddress"
+        ></div>
+
+
+        <button
+          class="copy-btn"
+          onclick="copyWallet()"
+          id="copyBtn"
+        >
+          COPY ADDRESS
+        </button>
+
+
+        <button
+          class="paid-btn"
+          onclick="confirmPaid()"
+          id="paidBtn"
+        >
+          I HAVE PAID — CONFIRM PAYMENT
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ORDER INFORMATION -->
+
+  <section
+    class="panel receive-panel"
+    id="receivePanel"
+  >
+
+    <div
+      class="panel-title"
+      id="receiveTitle"
+    >
+      ORDER INFORMATION
+    </div>
+
+
+    <p
+      class="payment-subtitle"
+      id="receiveSubtitle"
+    >
+      After payment, provide your Telegram username or email and transaction ID.
+    </p>
+
+
+    <div class="order-id-box">
+
+      <div
+        class="order-id-label"
+        id="receiveOrderIdLabel"
+      >
+        ORDER ID
+      </div>
+
+      <div
+        class="order-id-value"
+        id="receiveOrderIdValue"
+      >
+        —
+      </div>
+
+    </div>
+
+
+    <label
+      class="form-label"
+      id="contactLabel"
+    >
+      TELEGRAM OR EMAIL
+    </label>
+
+
+    <input
+      class="form-input"
+      id="contactInput"
+      type="text"
+      autocomplete="off"
+      placeholder="@username or email@example.com"
+    >
+
+
+    <div
+      class="form-help"
+      id="contactHelp"
+    >
+      Example Telegram: @username
+    </div>
+
+
+    <label
+      class="form-label"
+      id="txidLabel"
+    >
+      TRANSACTION ID / TXID
+    </label>
+
+
+    <input
+      class="form-input"
+      id="txidInput"
+      type="text"
+      autocomplete="off"
+      placeholder="Enter transaction ID"
+    >
+
+
+    <div
+      class="form-help"
+      id="txidHelp"
+    >
+      Enter the transaction ID shown by your wallet.
+    </div>
+
+
+    <div
+      class="form-error"
+      id="formError"
+    ></div>
+
+
+    <div
+      class="form-success"
+      id="formSuccess"
+    ></div>
+
+
+    <button
+      class="primary-btn"
+      id="submitBtn"
+      onclick="submitRequest()"
+    >
+      SUBMIT REQUEST
+    </button>
+
+
+    <div
+      class="notice"
+      id="verificationNotice"
+    >
+      TXID format is checked locally.
+      This demo does not perform blockchain verification.
+    </div>
+
+  </section>
+
+</main>
+
+
+<div
+ class="loading-overlay"
+ id="loadingOverlay"
+></div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+
+<script>
+
+const translations={
+
+en:{
+
+ langButton:"中文",
+ home:"HOME",
+
+ paymentTitle:"CRYPTO PAYMENT",
+
+ paymentSubtitle:
+ "Select your package, cryptocurrency and network.",
+
+ packageTitle:"SELECT PACKAGE",
+
+ coinTitle:"SELECT COIN",
+
+ networkTitle:"NETWORK",
+
+ summaryPackage:"PACKAGE",
+
+ summaryPayment:"PAYMENT",
+
+ summaryWallet:"WALLET",
+
+ proceed:"PROCEED TO PAYMENT",
+
+ qrTitle:"PAYMENT ADDRESS",
+
+ orderId:"ORDER ID",
+
+ walletLabel:"SEND PAYMENT TO",
+
+ copy:"COPY ADDRESS",
+
+ copied:"COPIED",
+
+ paid:"I HAVE PAID — CONFIRM PAYMENT",
+
+ receiveTitle:"ORDER INFORMATION",
+
+ receiveSubtitle:
+ "After payment, provide your Telegram username or email and transaction ID.",
+
+ contactLabel:"TELEGRAM OR EMAIL",
+
+ contactHelp:
+ "Example Telegram: @username",
+
+ txidLabel:"TRANSACTION ID / TXID",
+
+ txidHelp:
+ "Enter the transaction ID shown by your wallet.",
+
+ submit:"SUBMIT REQUEST",
+
+ processing:
+ "Your payment is being processed. After order confirmation, your account will be sent to:",
+
+ requestSent:"REQUEST SUBMITTED",
+
+ invalidContact:
+ "Please enter a valid Telegram username or email.",
+
+ invalidTxid:
+ "Your payment seems to have an error. We tried to check it, but no information has been received.",
+
+ paymentNotice:
+ "Payment amount for non-USDT coins is not converted automatically. Follow the displayed package value and selected payment instructions.",
+
+ verificationNotice:
+ "TXID format is checked locally. This demo does not perform blockchain verification.",
+
+ loadingStatus:[
+  "INITIALIZING SECURE PAYMENT",
+  "ESTABLISHING PAYMENT CHANNEL",
+  "PROCESSING REQUEST",
+  "CHECKING PAYMENT DATA",
+  "FINALIZING OPERATION"
+ ]
+
+},
+
+zh:{
+
+ langButton:"EN",
+ home:"首页",
+
+ paymentTitle:"加密货币支付",
+
+ paymentSubtitle:
+ "请选择套餐、加密货币和网络。",
+
+ packageTitle:"选择套餐",
+
+ coinTitle:"选择币种",
+
+ networkTitle:"网络",
+
+ summaryPackage:"套餐",
+
+ summaryPayment:"支付方式",
+
+ summaryWallet:"钱包",
+
+ proceed:"继续支付",
+
+ qrTitle:"支付地址",
+
+ orderId:"订单号",
+
+ walletLabel:"发送支付至",
+
+ copy:"复制地址",
+
+ copied:"已复制",
+
+ paid:"我已付款 — 确认付款",
+
+ receiveTitle:"订单信息",
+
+ receiveSubtitle:
+ "付款后，请提供 Telegram 用户名或电子邮箱以及交易 ID。",
+
+ contactLabel:"TELEGRAM 或电子邮箱",
+
+ contactHelp:
+ "Telegram 示例：@username",
+
+ txidLabel:"交易 ID / TXID",
+
+ txidHelp:
+ "请输入钱包显示的交易 ID。",
+
+ submit:"提交请求",
+
+ processing:
+ "您的付款正在处理中。订单确认后，账户将发送至：",
+
+ requestSent:"请求已提交",
+
+ invalidContact:
+ "请输入有效的 Telegram 用户名或电子邮箱。",
+
+ invalidTxid:
+ "您的付款似乎出现错误。我们尝试检查，但尚未收到任何信息。",
+
+ paymentNotice:
+ "非 USDT 币种不会自动换算金额。请按照显示的套餐价值和支付说明操作。",
+
+ verificationNotice:
+ "TXID 仅进行本地格式检查。本演示不会进行区块链验证。",
+
+ loadingStatus:[
+  "正在初始化安全支付",
+  "正在建立支付通道",
+  "正在处理请求",
+  "正在检查支付数据",
+  "正在完成操作"
+ ]
+
+}
+
+};
+
+
+const WALLET_ADDRESSES={
+
+ EVM:
+ "0x18eC51CA72b1658BAe458f0071A733b9e214C1AD",
+
+ BTC:
+ "bc1qz8hdldfn6j4g03xnem8rra349040uydjnardk6",
+
+ SOL:
+ "3JcuQknv8GrYAfNQmmD4Up11i346Lc4ovZLUHMUXGeV8",
+
+ TRX:
+ "TSeFNoBmS1XoJhzv7cbnos4AfLqS5YVZp2"
+
+};
+
+
+const NETWORKS={
+
+ USDT:[
+  ["ERC20","Ethereum"],
+  ["BEP20","BNB Smart Chain"],
+  ["TRC20","TRON"]
+ ],
+
+ BTC:[
+  ["BTC","Bitcoin"]
+ ],
+
+ SOL:[
+  ["SOL","Solana"]
+ ],
+
+ BNB:[
+  ["BEP20","BNB Smart Chain"]
+ ],
+
+ TRX:[
+  ["TRC20","TRON"]
+ ]
+
+};
+
+
+let currentLang=
+ localStorage.getItem("mziporn_lang")||"en";
+
+let selectedPackage=68;
+
+let selectedCoin="USDT";
+
+let selectedNetwork="ERC20";
+
+let selectedWallet="";
+
+let orderId="";
+
+let loadingTimer=null;
+
+
+function t(key){
+
+ return translations[currentLang][key];
+
+}
+
+
+function applyLanguage(){
+
+ document.documentElement.lang=
+  currentLang==="zh"?"zh":"en";
+
+
+ document.getElementById("langBtn").textContent=
+  t("langButton");
+
+
+ document.getElementById("homeBtn").textContent=
+  t("home");
+
+
+ document.getElementById("paymentTitle").textContent=
+  t("paymentTitle");
+
+
+ document.getElementById("paymentSubtitle").textContent=
+  t("paymentSubtitle");
+
+
+ document.getElementById("packageTitle").textContent=
+  t("packageTitle");
+
+
+ document.getElementById("coinTitle").textContent=
+  t("coinTitle");
+
+
+ document.getElementById("networkTitle").textContent=
+  t("networkTitle");
+
+
+ document.getElementById("summaryPackageLabel").textContent=
+  t("summaryPackage");
+
+
+ document.getElementById("summaryCoinLabel").textContent=
+  t("summaryPayment");
+
+
+ document.getElementById("summaryAddressLabel").textContent=
+  t("summaryWallet");
+
+
+ document.getElementById("proceedBtn").textContent=
+  t("proceed");
+
+
+ document.getElementById("qrTitle").textContent=
+  t("qrTitle");
+
+
+ document.getElementById("orderIdLabel").textContent=
+  t("orderId");
+
+
+ document.getElementById("receiveOrderIdLabel").textContent=
+  t("orderId");
+
+
+ document.getElementById("walletLabel").textContent=
+  t("walletLabel");
+
+
+ document.getElementById("copyBtn").textContent=
+  t("copy");
+
+
+ document.getElementById("paidBtn").textContent=
+  t("paid");
+
+
+ document.getElementById("receiveTitle").textContent=
+  t("receiveTitle");
+
+
+ document.getElementById("receiveSubtitle").textContent=
+  t("receiveSubtitle");
+
+
+ document.getElementById("contactLabel").textContent=
+  t("contactLabel");
+
+
+ document.getElementById("contactHelp").textContent=
+  t("contactHelp");
+
+
+ document.getElementById("txidLabel").textContent=
+  t("txidLabel");
+
+
+ document.getElementById("txidHelp").textContent=
+  t("txidHelp");
+
+
+ document.getElementById("submitBtn").textContent=
+  t("submit");
+
+
+ document.getElementById("paymentNotice").textContent=
+  t("paymentNotice");
+
+
+ document.getElementById("verificationNotice").textContent=
+  t("verificationNotice");
+
+
+ updateNetworkOptions();
+
+ updateSummary();
+
+
+ localStorage.setItem(
+  "mziporn_lang",
+  currentLang
+ );
+
+}
+
+
+function toggleLanguage(){
+
+ currentLang=
+  currentLang==="en"?"zh":"en";
+
+ applyLanguage();
+
+}
+
+
+function goHome(){
+
+ window.location.href="index.html";
+
+}
+
+
+function selectPackage(value){
+
+ selectedPackage=value;
+
+
+ document.getElementById("package68")
+  .classList.toggle(
+   "active",
+   value===68
+  );
+
+
+ document.getElementById("package128")
+  .classList.toggle(
+   "active",
+   value===128
+  );
+
+
+ updateSummary();
+
+}
+
+
+function toggleFeatures(event,value){
+
+ event.stopPropagation();
+
+
+ const el=
+  document.getElementById(
+   "features"+value
+  );
+
+
+ el.parentElement.classList.toggle(
+  "show-features"
+ );
+
+}
+
+
+function selectCoin(coin){
+
+ selectedCoin=coin;
+
+
+ document.querySelectorAll(".coin")
+  .forEach(el=>{
+
+   el.classList.toggle(
+    "active",
+    el.dataset.coin===coin
+   );
+
+  });
+
+
+ selectedNetwork=
+  NETWORKS[coin][0][0];
+
+
+ updateNetworkOptions();
+
+ updateSummary();
+
+}
+
+
+function updateNetworkOptions(){
+
+ const grid=
+  document.getElementById(
+   "networkGrid"
+  );
+
+
+ grid.innerHTML="";
+
+
+ NETWORKS[selectedCoin]
+  .forEach(item=>{
+
+   const button=
+    document.createElement(
+     "button"
+    );
+
+
+   button.className="network";
+
+
+   if(item[0]===selectedNetwork){
+
+    button.classList.add(
+     "active"
+    );
+
+   }
+
+
+   button.textContent=
+    item[1]+" ("+item[0]+")";
+
+
+   button.onclick=()=>{
+
+    selectNetwork(item[0]);
+
+   };
+
+
+   grid.appendChild(button);
+
+  });
+
+}
+
+
+function selectNetwork(network){
+
+ selectedNetwork=network;
+
+ updateNetworkOptions();
+
+ updateSummary();
+
+}
+
+
+function getWalletAddress(){
+
+ if(
+  selectedCoin==="USDT" &&
+  selectedNetwork==="TRC20"
+ ){
+
+  return WALLET_ADDRESSES.TRX;
+
+ }
+
+
+ if(selectedCoin==="TRX"){
+
+  return WALLET_ADDRESSES.TRX;
+
+ }
+
+
+ if(selectedCoin==="BTC"){
+
+  return WALLET_ADDRESSES.BTC;
+
+ }
+
+
+ if(selectedCoin==="SOL"){
+
+  return WALLET_ADDRESSES.SOL;
+
+ }
+
+
+ return WALLET_ADDRESSES.EVM;
+
+}
+
+
+function updateSummary(){
+
+ selectedWallet=
+  getWalletAddress();
+
+
+ document.getElementById(
+  "summaryPackage"
+ ).textContent=
+  selectedPackage+" USDT";
+
+
+ document.getElementById(
+  "summaryCoin"
+ ).textContent=
+  selectedCoin+" / "+selectedNetwork;
+
+
+ document.getElementById(
+  "summaryAddress"
+ ).textContent=
+  selectedWallet.slice(0,8)+"..."+
+  selectedWallet.slice(-6);
+
+}
+
+
+function showLoading(message,callback){
+
+ const overlay=
+  document.getElementById(
+   "loadingOverlay"
+  );
+
+
+ overlay.innerHTML=`
+
+ <div class="loading-box">
+
+  <div class="loading-title">
+   ${message}
+  </div>
+
+  <div
+   class="loading-status"
+   id="loadingStatus"
+  >
+   ${t("loadingStatus")[0]}
+  </div>
+
+  <div class="progress-wrap">
+
+   <div
+    class="progress-bar"
+    id="loadingProgress"
+   ></div>
+
+  </div>
+
+  <div class="loading-percent">
+
+   <span>
+    PROCESSING
+   </span>
+
+   <span id="loadingPercent">
+    0%
+   </span>
+
+  </div>
+
+ </div>`;
+
+ overlay.classList.add("active");
+
+
+ const start=
+  Date.now();
+
+
+ clearInterval(
+  loadingTimer
+ );
+
+
+ loadingTimer=
+  setInterval(()=>{
+
+   const elapsed=
+    Date.now()-start;
+
+
+   const percent=
+    Math.min(
+     100,
+     elapsed/1000*100
+    );
+
+
+   document.getElementById(
+    "loadingProgress"
+   ).style.width=
+    percent+"%";
+
+
+   document.getElementById(
+    "loadingPercent"
+   ).textContent=
+    Math.floor(percent)+"%";
+
+
+   const index=
+    Math.min(
+     t("loadingStatus").length-1,
+     Math.floor(percent/20)
+    );
+
+
+   document.getElementById(
+    "loadingStatus"
+   ).textContent=
+    t("loadingStatus")[index];
+
+
+   if(elapsed>=1000){
+
+    clearInterval(
+     loadingTimer
+    );
+
+
+    overlay.classList.remove(
+     "active"
+    );
+
+
+    if(callback){
+
+     callback();
+
+    }
+
+   }
+
+  },50);
+
+}
+
+
+function generateOrderId(){
+
+ const chars=
+  "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+
+ let result="MZ-";
+
+
+ if(
+  window.crypto &&
+  crypto.getRandomValues
+ ){
+
+  const values=
+   new Uint32Array(8);
+
+
+  crypto.getRandomValues(
+   values
+  );
+
+
+  for(let i=0;i<8;i++){
+
+   result+=
+    chars[
+     values[i]%chars.length
+    ];
+
+  }
+
+ }else{
+
+  for(let i=0;i<8;i++){
+
+   result+=
+    chars[
+     Math.floor(
+      Math.random()*
+      chars.length
+     )
+    ];
+
+  }
+
+ }
+
+
+ return result;
+
+}
+
+
+function setOrderId(){
+
+ orderId=
+  generateOrderId();
+
+
+ document.getElementById(
+  "orderIdValue"
+ ).textContent=
+  orderId;
+
+
+ document.getElementById(
+  "receiveOrderIdValue"
+ ).textContent=
+  orderId;
+
+}
+
+
+function proceedToPayment(){
+
+ setOrderId();
+
+
+ showLoading(
+
+  currentLang==="zh"?
+   "正在准备支付":
+   "PREPARING PAYMENT",
+
+  ()=>{
+
+   showQRCode();
+
+  }
+
+ );
+
+}
+
+
+function showQRCode(){
+
+ selectedWallet=
+  getWalletAddress();
+
+
+ document.getElementById(
+  "selectionPanel"
+ ).style.display=
+  "none";
+
+
+ document.getElementById(
+  "qrPanel"
+ ).classList.add(
+  "active"
+ );
+
+
+ document.getElementById(
+  "walletAddress"
+ ).textContent=
+  selectedWallet;
+
+
+ const qr=
+  document.getElementById(
+   "qrcode"
+  );
+
+
+ qr.innerHTML="";
+
+
+ new QRCode(
+  qr,
+  {
+   text:selectedWallet,
+   width:220,
+   height:220,
+   correctLevel:
+    QRCode.CorrectLevel.M
+  }
+ );
+
+
+ window.scrollTo({
+
+  top:0,
+
+  behavior:"smooth"
+
+ });
+
+}
+
+
+async function copyWallet(){
+
+ const address=
+  document.getElementById(
+   "walletAddress"
+  ).textContent;
+
+
+ try{
+
+  await navigator.clipboard.writeText(
+   address
+  );
+
+ }catch(e){
+
+  const temp=
+   document.createElement(
+    "textarea"
+   );
+
+
+  temp.value=
+   address;
+
+
+  document.body.appendChild(
+   temp
+  );
+
+
+  temp.select();
+
+
+  document.execCommand(
+   "copy"
+  );
+
+
+  temp.remove();
+
+ }
+
+
+ const btn=
+  document.getElementById(
+   "copyBtn"
+  );
+
+
+ const old=
+  btn.textContent;
+
+
+ btn.textContent=
+  t("copied");
+
+
+ setTimeout(()=>{
+
+  btn.textContent=
+   old;
+
+ },1500);
+
+}
+
+
+function confirmPaid(){
+
+ document.getElementById(
+  "qrPanel"
+ ).classList.remove(
+  "active"
+ );
+
+
+ showLoading(
+
+  currentLang==="zh"?
+   "正在确认付款":
+   "CONFIRMING PAYMENT",
+
+  ()=>{
+
+   document.getElementById(
+    "receivePanel"
+   ).classList.add(
+    "active"
+   );
+
+
+   window.scrollTo({
+
+    top:0,
+
+    behavior:"smooth"
+
+   });
+
+  }
+
+ );
+
+}
+
+
+function isValidContact(value){
+
+ const telegram=
+  /^@[A-Za-z0-9_]{5,32}$/;
+
+
+ const email=
+  /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+
+ return telegram.test(value)||
+  email.test(value);
+
+}
+
+
+function isValidTxid(value){
+
+ if(!value)
+  return false;
+
+
+ if(value.length<8)
+  return false;
+
+
+ if(value.length>180)
+  return false;
+
+
+ return /^[A-Za-z0-9_-]+$/.test(
+  value
+ );
+
+}
+
+
+function showFormError(message){
+
+ const error=
+  document.getElementById(
+   "formError"
+  );
+
+
+ const success=
+  document.getElementById(
+   "formSuccess"
+  );
+
+
+ success.style.display=
+  "none";
+
+
+ error.textContent=
+  message;
+
+
+ error.style.display=
+  "block";
+
+}
+
+
+function showFormSuccess(message){
+
+ const error=
+  document.getElementById(
+   "formError"
+  );
+
+
+ const success=
+  document.getElementById(
+   "formSuccess"
+  );
+
+
+ error.style.display=
+  "none";
+
+
+ success.textContent=
+  message;
+
+
+ success.style.display=
+  "block";
+
+}
+
+
+function clearFormMessages(){
+
+ document.getElementById(
+  "formError"
+ ).style.display=
+  "none";
+
+
+ document.getElementById(
+  "formSuccess"
+ ).style.display=
+  "none";
+
+}
+
+
+function submitRequest(){
+
+ const contactInput=
+  document.getElementById(
+   "contactInput"
+  );
+
+
+ const txidInput=
+  document.getElementById(
+   "txidInput"
+  );
+
+
+ if(
+  !contactInput||
+  !txidInput
+ ){
+
+  return;
+
+ }
+
+
+ clearFormMessages();
+
+
+ const contact=
+  contactInput.value.trim();
+
+
+ const txid=
+  txidInput.value.trim();
+
+
+ if(
+  !isValidContact(contact)
+ ){
+
+  showFormError(
+   t("invalidContact")
+  );
+
+
+  contactInput.focus();
+
+
+  return;
+
+ }
+
+
+ if(
+  !isValidTxid(txid)
+ ){
+
+  showFormError(
+   t("invalidTxid")
+  );
+
+
+  txidInput.focus();
+
+
+  return;
+
+ }
+
+
+ showLoading(
+
+  currentLang==="zh"?
+   "正在提交订单":
+   "SUBMITTING REQUEST",
+
+  ()=>{
+
+   const successMessage=
+    t("processing")+
+    " "+
+    contact;
+
+
+   showFormSuccess(
+    successMessage
+   );
+
+
+   const submitButton=
+    document.getElementById(
+     "submitBtn"
+    );
+
+
+   if(submitButton){
+
+    submitButton.disabled=
+     true;
+
+
+    submitButton.textContent=
+     t("requestSent");
+
+   }
+
+  }
+
+ );
+
+}
+
+
+document.getElementById(
+ "contactInput"
+).addEventListener(
+ "input",
+ clearFormMessages
+);
+
+
+document.getElementById(
+ "txidInput"
+).addEventListener(
+ "input",
+ clearFormMessages
+);
+
+
+const savedProduct=
+ localStorage.getItem(
+  "mziporn_product"
+ );
+
+
+if(savedProduct){
+
+ localStorage.removeItem(
+  "mziporn_product"
+ );
+
+}
+
+
+applyLanguage();
+
+</script>
+
+</body>
+</html>
